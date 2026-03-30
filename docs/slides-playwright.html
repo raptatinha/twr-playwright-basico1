@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playwright Básico · Parte 1 — Slides · testingwithrenata.com</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/slides.css">
+<script>/* Anti-FOUC: aplica tema antes do CSS ser renderizado */
+(function(){try{var t=localStorage.getItem('twr-docs-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();
+</script>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ══ SLIDE 01 · CAPA ══ -->
+  <div class="slide active" id="s1">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-green"></div>
+    <div class="bg-glow-blue"></div>
+    <div class="slide-num">01 / 14</div>
+
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; position:relative; z-index:1;">
+      <div class="tag tag-green">Playwright Básico</div>
+      <h1>Parte 1 · <span class="hl">Introdução</span><br>ao Playwright</h1>
+      <p class="subtitle">Primeiros testes · Instalação do zero · Conceitos fundamentais</p>
+      <div style="display:flex; gap:40px; margin-top:48px;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:4px;">Duração</div>
+          <div style="font-size:18px; font-weight:600;">2 horas</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:4px;">Tópicos</div>
+          <div style="font-size:18px; font-weight:600;">7 seções</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:4px;">Nível</div>
+          <div style="font-size:18px; font-weight:600;">Iniciante</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative; z-index:1; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">
+      playwright.dev
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 02 · AGENDA ══ -->
+  <div class="slide" id="s2">
+    <div class="bg-grid"></div>
+    <div class="slide-num">02 / 14</div>
+
+    <div class="tag tag-blue">Agenda da Aula</div>
+    <h2>O que vamos aprender hoje</h2>
+    <div class="hdivider"></div>
+
+    <div class="timeline-list">
+      <div class="tl-row highlight">
+        <div class="tl-time">00:00</div>
+        <div><div class="tl-name">Abertura</div><div class="tl-sub">Boas-vindas e objetivos</div></div>
+        <span class="tl-badge badge-g">10 min</span>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">00:10</div>
+        <div><div class="tl-name">01 · O que é Playwright</div><div class="tl-sub">Conceito, site, quando usar</div></div>
+        <span class="tl-badge badge-g">8 min</span>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">00:18</div>
+        <div><div class="tl-name">02 · Setup e primeiro teste</div><div class="tl-sub">npm init playwright@latest do zero</div></div>
+        <span class="tl-badge badge-o">22 min</span>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">00:40</div>
+        <div><div class="tl-name">03 · Locators</div><div class="tl-sub">getByRole, getByText, boas práticas</div></div>
+        <span class="tl-badge badge-g">15 min</span>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">00:55</div>
+        <div><div class="tl-name">04 · Interações básicas</div><div class="tl-sub">click, fill, select, upload, keyboard</div></div>
+        <span class="tl-badge badge-g">12 min</span>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">01:07</div>
+        <div><div class="tl-name">05 · Assertions e auto-wait</div><div class="tl-sub">expect, auto-waiting, sem waitForTimeout</div></div>
+        <span class="tl-badge badge-g">15 min</span>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">01:22</div>
+        <div><div class="tl-name">06 · Execução e browsers</div><div class="tl-sub">Chromium, Firefox, WebKit, headed/headless</div></div>
+        <span class="tl-badge badge-g">10 min</span>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">01:32</div>
+        <div><div class="tl-name">07 · Debug rápido</div><div class="tl-sub">UI mode, trace viewer, extensão</div></div>
+        <span class="tl-badge badge-g">8 min</span>
+      </div>
+      <div class="tl-row highlight-blue">
+        <div class="tl-time">01:40</div>
+        <div><div class="tl-name">Q&A — Perguntas</div><div class="tl-sub">Dúvidas e encerramento</div></div>
+        <span class="tl-badge badge-b">20 min</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 03 · O QUE É PLAYWRIGHT ══ -->
+  <div class="slide" id="s3">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-green"></div>
+    <div class="slide-num">03 / 14</div>
+
+    <div class="tag tag-green">Seção 01 · 8 min</div>
+    <h2>O que é <span class="hl">Playwright</span>?</h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1;">
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="card green-border">
+          <div class="card-label">Definição</div>
+          <ul class="bullets">
+            <li>Biblioteca open-source da <strong>Microsoft</strong></li>
+            <li>Automação de browsers para testes E2E</li>
+            <li>Suporta <strong>Chromium · Firefox · WebKit</strong></li>
+            <li>API única para os 3 browsers</li>
+            <li>Disponível para JS/TS, Python, Java, .NET</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">Principal diferencial</div>
+          <ul class="bullets">
+            <li><strong>Auto-wait nativo</strong> — sem flakiness</li>
+            <li>Paralelismo real por padrão</li>
+            <li>Trace viewer e UI mode integrados</li>
+            <li>Crescimento acelerado desde 2020</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="card">
+          <div class="card-label">Quando usar Playwright</div>
+          <ul class="bullets">
+            <li>Testes de fluxos completos de usuário</li>
+            <li>Múltiplos browsers simultaneamente</li>
+            <li>Múltiplas abas, downloads, uploads</li>
+            <li>Projetos TypeScript / JavaScript</li>
+            <li>Quando precisar de velocidade com paralelismo</li>
+          </ul>
+        </div>
+        <div style="background: rgba(79,130,155,0.06); border: 1px solid rgba(79,130,155,0.25); border-radius:12px; padding:20px; text-align:center;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px;">Site oficial</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:700; color:var(--teal);">playwright.dev</div>
+          <div style="font-size:13px; color:var(--muted); margin-top:8px;">Abrir ao vivo durante a aula</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 04 · SETUP ══ -->
+  <div class="slide" id="s4">
+    <div class="bg-grid"></div>
+    <div class="slide-num">04 / 14</div>
+
+    <div class="tag tag-orange">Seção 02 · 22 min</div>
+    <h2>Setup e <span class="hl">Primeiro Teste</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1; align-items:stretch;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card" style="flex:1;">
+          <div class="card-label">Passo a passo</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content"><strong>Criar pasta vazia</strong><br><code>mkdir meu-projeto && cd meu-projeto</code></div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content"><strong>Instalar Playwright</strong><br><code>npm init playwright@latest</code></div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content"><strong>Explorar estrutura gerada</strong><br>playwright.config.ts · tests/ · package.json</div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-content"><strong>Rodar os testes</strong><br><code>npx playwright test</code></div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-content"><strong>Ver relatório HTML</strong><br><code>npx playwright show-report</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="codeblock" style="flex:1;">
+          <pre><span class="cm"># Instalar</span>
+<span class="fn">npm</span> init playwright@latest
+
+<span class="cm"># Rodar testes</span>
+<span class="fn">npx</span> playwright test
+
+<span class="cm"># Rodar um arquivo</span>
+<span class="fn">npx</span> playwright test example.spec.ts
+
+<span class="cm"># Ver relatório</span>
+<span class="fn">npx</span> playwright show-report</pre>
+        </div>
+        <div class="warn">
+          <strong>⚠️ Atenção:</strong> Requer Node.js v18+. Verificar com <code>node -v</code> antes de começar.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 05 · ESTRUTURA ══ -->
+  <div class="slide" id="s5">
+    <div class="bg-grid"></div>
+    <div class="slide-num">05 / 14</div>
+
+    <div class="tag tag-orange">Seção 02 · Setup</div>
+    <h2>Estrutura do <span class="hl">Projeto</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1; align-items:start;">
+      <div>
+        <div class="codeblock">
+          <pre><span class="cm"># Estrutura gerada pelo wizard</span>
+
+meu-projeto/
+├── <span class="str">playwright.config.ts</span>   <span class="cm">← config global</span>
+├── <span class="str">package.json</span>
+├── <span class="str">tests/</span>
+│   └── <span class="str">example.spec.ts</span>    <span class="cm">← seu primeiro teste</span>
+└── <span class="str">tests-examples/</span>
+    └── <span class="str">demo-todo-app.spec.ts</span></pre>
+        </div>
+
+        <div class="codeblock" style="margin-top:16px;">
+          <pre><span class="cm">// example.spec.ts (gerado)</span>
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="fn">test</span>(<span class="str">'has title'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'https://playwright.dev/'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(page)
+    .<span class="fn">toHaveTitle</span>(<span class="str">/Playwright/</span>);
+});</pre>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card green-border">
+          <div class="card-label">playwright.config.ts — principais opções</div>
+          <ul class="bullets">
+            <li><code>testDir</code> — pasta com os testes</li>
+            <li><code>timeout</code> — timeout por teste (30s padrão)</li>
+            <li><code>retries</code> — tentativas em caso de falha</li>
+            <li><code>workers</code> — paralelismo (workers simultâneos)</li>
+            <li><code>use.baseURL</code> — URL base para <code>goto('/')</code></li>
+            <li><code>projects</code> — browsers configurados</li>
+          </ul>
+        </div>
+        <div class="tip">
+          <strong>💡 Dica:</strong> O exemplo gerado em <code>tests-examples/</code> é excelente para aprender. Abra e leia junto com a turma!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 06 · LOCATORS ══ -->
+  <div class="slide" id="s6">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-green"></div>
+    <div class="slide-num">06 / 14</div>
+
+    <div class="tag tag-green">Seção 03 · 15 min</div>
+    <h2><span class="hl">Locators</span> — Encontrando Elementos</h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card green-border">
+          <div class="card-label">Locators recomendados</div>
+          <ul class="bullets">
+            <li><code>getByRole()</code> &nbsp;— papel de acessibilidade</li>
+            <li><code>getByText()</code> &nbsp;— texto visível</li>
+            <li><code>getByLabel()</code> — label do input</li>
+            <li><code>getByPlaceholder()</code> — placeholder</li>
+            <li><code>getByTestId()</code> — <code>data-testid</code></li>
+            <li><code>getByAltText()</code> — alt de imagens</li>
+          </ul>
+        </div>
+        <div class="card red-border">
+          <div class="card-label">❌ Evitar</div>
+          <ul class="bullets red">
+            <li><code>.btn.btn-primary &gt; span</code> — CSS frágil</li>
+            <li><code>//div[@class="x"]/button[2]</code> — XPath longo</li>
+            <li>Seletores por posição (nth-child)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="codeblock" style="flex:1;">
+        <pre><span class="cm">// ✅ getByRole — mais recomendado</span>
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, {
+  name: <span class="str">'Entrar'</span>
+}).<span class="fn">click</span>();
+
+<span class="cm">// ✅ getByLabel — para formulários</span>
+<span class="kw">await</span> page
+  .<span class="fn">getByLabel</span>(<span class="str">'E-mail'</span>)
+  .<span class="fn">fill</span>(<span class="str">'user@email.com'</span>);
+
+<span class="cm">// ✅ getByTestId — quando há data-testid</span>
+<span class="kw">await</span> page
+  .<span class="fn">getByTestId</span>(<span class="str">'submit-btn'</span>)
+  .<span class="fn">click</span>();
+
+<span class="cm">// ✅ getByText — para textos visíveis</span>
+<span class="kw">await</span> page
+  .<span class="fn">getByText</span>(<span class="str">'Bem-vindo!'</span>)
+  .<span class="fn">isVisible</span>();</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 07 · INTERAÇÕES ══ -->
+  <div class="slide" id="s7">
+    <div class="bg-grid"></div>
+    <div class="slide-num">07 / 14</div>
+
+    <div class="tag tag-purple">Seção 04 · 12 min</div>
+    <h2>Interações <span class="hl-blue">Básicas</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card">
+          <div class="card-label">Ações disponíveis</div>
+          <ul class="bullets">
+            <li><code>click()</code> — clica no elemento</li>
+            <li><code>dblclick()</code> — duplo clique</li>
+            <li><code>hover()</code> — passa o mouse</li>
+            <li><code>fill()</code> — preenche (limpa antes)</li>
+            <li><code>type()</code> — digita caractere a caractere</li>
+            <li><code>press('Enter')</code> — tecla do teclado</li>
+            <li><code>selectOption()</code> — select / dropdown</li>
+            <li><code>setInputFiles()</code> — upload de arquivo</li>
+            <li><code>check()</code> / <code>uncheck()</code> — checkbox</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="codeblock" style="flex:1;">
+        <pre><span class="cm">// Formulário completo</span>
+<span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/login'</span>);
+
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'E-mail'</span>)
+  .<span class="fn">fill</span>(<span class="str">'user@email.com'</span>);
+
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'Senha'</span>)
+  .<span class="fn">fill</span>(<span class="str">'senha123'</span>);
+
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, {
+  name: <span class="str">'Entrar'</span>
+}).<span class="fn">click</span>();
+
+<span class="cm">// Dropdown</span>
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'País'</span>)
+  .<span class="fn">selectOption</span>(<span class="str">'Brasil'</span>);
+
+<span class="cm">// Tecla</span>
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'searchbox'</span>)
+  .<span class="fn">press</span>(<span class="str">'Enter'</span>);</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 08 · ASSERTIONS ══ -->
+  <div class="slide" id="s8">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-blue"></div>
+    <div class="slide-num">08 / 14</div>
+
+    <div class="tag tag-blue">Seção 05 · 15 min</div>
+    <h2>Assertions e <span class="hl">Auto-wait</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card blue-border">
+          <div class="card-label">expect() — assertions principais</div>
+          <ul class="bullets">
+            <li><code>toBeVisible()</code> — elemento visível</li>
+            <li><code>toBeHidden()</code> — elemento oculto</li>
+            <li><code>toHaveText()</code> — tem o texto</li>
+            <li><code>toHaveValue()</code> — valor do input</li>
+            <li><code>toBeChecked()</code> — checkbox marcado</li>
+            <li><code>toBeEnabled()</code> — habilitado</li>
+            <li><code>toHaveURL()</code> — URL da página</li>
+            <li><code>toHaveTitle()</code> — título da aba</li>
+          </ul>
+        </div>
+        <div class="warn">
+          <strong>❌ Anti-pattern:</strong> <code>waitForTimeout(3000)</code> torna testes lentos e frágeis. O auto-wait resolve isso!
+        </div>
+      </div>
+
+      <div class="codeblock" style="flex:1;">
+        <pre><span class="cm">// Auto-retry embutido — aguarda até passar</span>
+<span class="kw">await</span> <span class="fn">expect</span>(page
+  .<span class="fn">getByRole</span>(<span class="str">'heading'</span>))
+  .<span class="fn">toBeVisible</span>();
+
+<span class="kw">await</span> <span class="fn">expect</span>(page)
+  .<span class="fn">toHaveURL</span>(<span class="str">/dashboard/</span>);
+
+<span class="kw">await</span> <span class="fn">expect</span>(page
+  .<span class="fn">getByText</span>(<span class="str">'Salvo!'</span>))
+  .<span class="fn">toBeVisible</span>();
+
+<span class="cm">// ❌ Nunca usar isso</span>
+<span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="num">3000</span>);
+
+<span class="cm">// ✅ Alternativa correta</span>
+<span class="kw">await</span> <span class="fn">expect</span>(page
+  .<span class="fn">getByText</span>(<span class="str">'Carregando...'</span>))
+  .<span class="fn">toBeHidden</span>();</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 09 · AUTO-WAIT CONCEITO ══ -->
+  <div class="slide" id="s9">
+    <div class="bg-grid"></div>
+    <div class="slide-num">09 / 14</div>
+
+    <div class="tag tag-blue">Seção 05 · Auto-wait</div>
+    <h2>Como funciona o <span class="hl">Auto-wait</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-3" style="flex:1; align-items:start;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:40px; margin-bottom:12px;">👁️</div>
+        <div class="card-label">1. Visível</div>
+        <p style="font-size:13px; color:var(--text2);">O elemento precisa estar visível na página</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:40px; margin-bottom:12px;">⚖️</div>
+        <div class="card-label">2. Estável</div>
+        <p style="font-size:13px; color:var(--text2);">Sem animações em andamento, elemento parado</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:40px; margin-bottom:12px;">🖱️</div>
+        <div class="card-label">3. Habilitado</div>
+        <p style="font-size:13px; color:var(--text2);">Não está desabilitado ou bloqueando eventos</p>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:24px; margin-top:24px;">
+      <div class="card" style="flex:1;">
+        <div class="card-label">Timeout padrão</div>
+        <div style="display:flex; gap:24px; align-items:center; margin-top:8px;">
+          <div>
+            <div class="big-stat">30s</div>
+            <div class="big-stat-label">por ação / assertion</div>
+          </div>
+          <ul class="bullets" style="flex:1;">
+            <li>Configurável globalmente no <code>playwright.config.ts</code></li>
+            <li>Configurável por teste: <code>test.setTimeout(60000)</code></li>
+            <li>Assertions tentam novamente a cada ~100ms</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tip" style="flex:1;">
+        <strong>💡 Resultado:</strong> Com o auto-wait, os testes em Playwright têm muito menos flakiness (testes que falham de forma intermitente) do que em Selenium ou outras ferramentas sem esse mecanismo.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 10 · BROWSERS ══ -->
+  <div class="slide" id="s10">
+    <div class="bg-grid"></div>
+    <div class="slide-num">10 / 14</div>
+
+    <div class="tag tag-green">Seção 06 · 10 min</div>
+    <h2>Execução e <span class="hl">Browsers</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-3" style="margin-bottom:20px;">
+      <div class="card green-border" style="text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">⚡</div>
+        <div class="card-label">Chromium</div>
+        <p style="font-size:13px; color:var(--text2);">Padrão. Cobre Chrome e Edge. Mais rápido.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🦊</div>
+        <div class="card-label">Firefox</div>
+        <p style="font-size:13px; color:var(--text2);">Motor Gecko. Versão customizada do Firefox.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🧭</div>
+        <div class="card-label">WebKit</div>
+        <p style="font-size:13px; color:var(--text2);">Motor do Safari. Testa iOS/macOS no Linux.</p>
+      </div>
+    </div>
+
+    <div class="codeblock">
+      <pre><span class="cm"># Headed (com janela visível)</span>
+<span class="fn">npx</span> playwright test <span class="op">--headed</span>
+
+<span class="cm"># Apenas Firefox</span>
+<span class="fn">npx</span> playwright test <span class="op">--project</span>=firefox
+
+<span class="cm"># Limitar paralelismo</span>
+<span class="fn">npx</span> playwright test <span class="op">--workers</span>=1</pre>
+    </div>
+
+    <div class="tip" style="margin-top:16px;">
+      <strong>💡 Demo:</strong> Rode <code>npx playwright test --headed</code> ao vivo para mostrar o browser abrindo. O efeito visual é impactante na primeira aula!
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 11 · DEBUG ══ -->
+  <div class="slide" id="s11">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-green"></div>
+    <div class="slide-num">11 / 14</div>
+
+    <div class="tag tag-green">Seção 07 · 8 min</div>
+    <h2>Debug <span class="hl">Rápido</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card green-border">
+          <div class="card-label">UI Mode — favorito da turma</div>
+          <ul class="bullets">
+            <li>Interface visual para rodar testes</li>
+            <li>Time-travel com screenshot de cada passo</li>
+            <li>Ver DOM no momento de cada ação</li>
+            <li>Filtrar, buscar e re-rodar testes</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">Trace Viewer</div>
+          <ul class="bullets">
+            <li>Grava screenshots, network, console</li>
+            <li>Essencial para debugar falhas em CI</li>
+            <li>Habilitar: <code>trace: 'on-first-retry'</code></li>
+            <li>Navegar cada passo do teste falho</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">Extensão VS Code</div>
+          <ul class="bullets">
+            <li>Rodar testes com um clique</li>
+            <li>Resultado inline no editor</li>
+            <li>Codegen integrado</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="codeblock" style="flex:1;">
+        <pre><span class="cm"># UI Mode (interface visual)</span>
+<span class="fn">npx</span> playwright test <span class="op">--ui</span>
+
+<span class="cm"># Debug passo a passo</span>
+<span class="fn">npx</span> playwright test <span class="op">--debug</span>
+
+<span class="cm"># Gerar código automaticamente</span>
+<span class="fn">npx</span> playwright codegen playwright.dev
+
+<span class="cm"># Ver trace</span>
+<span class="fn">npx</span> playwright show-trace trace.zip
+
+<span class="cm"># Habilitar trace no config</span>
+use: {
+  trace: <span class="str">'on-first-retry'</span>,
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 12 · RESUMO ══ -->
+  <div class="slide" id="s12">
+    <div class="bg-grid"></div>
+    <div class="slide-num">12 / 14</div>
+
+    <div class="tag tag-blue">Resumo</div>
+    <h2>O que aprendemos <span class="hl">hoje</span></h2>
+    <div class="hdivider"></div>
+
+    <div class="cols cols-2" style="flex:1;">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="card green-border">
+          <div class="card-label">Conceitos</div>
+          <ul class="bullets">
+            <li>Playwright é da Microsoft, suporta 3 browsers</li>
+            <li>Auto-wait elimina a necessidade de sleeps</li>
+            <li>Locators semânticos são mais robustos</li>
+            <li>Nunca usar <code>waitForTimeout()</code></li>
+          </ul>
+        </div>
+        <div class="card green-border">
+          <div class="card-label">Comandos essenciais</div>
+          <ul class="bullets">
+            <li><code>npm init playwright@latest</code></li>
+            <li><code>npx playwright test</code></li>
+            <li><code>npx playwright test --ui</code></li>
+            <li><code>npx playwright show-report</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="card">
+          <div class="card-label">Locators aprendidos</div>
+          <ul class="bullets">
+            <li><code>getByRole()</code> <code>getByText()</code></li>
+            <li><code>getByLabel()</code> <code>getByTestId()</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">Interações aprendidas</div>
+          <ul class="bullets">
+            <li><code>click()</code> <code>fill()</code> <code>press()</code></li>
+            <li><code>selectOption()</code> <code>setInputFiles()</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">Debug aprendido</div>
+          <ul class="bullets">
+            <li>UI Mode, Trace Viewer, Extensão VS Code</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 13 · Q&A ══ -->
+  <div class="slide" id="s13">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-blue"></div>
+    <div class="slide-num">13 / 14</div>
+
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:24px;">
+      <div style="font-size:72px;">🙋</div>
+      <div class="tag tag-blue">Perguntas · 20 min</div>
+      <h1>Q <span class="hl">&amp;</span> A</h1>
+      <p class="subtitle" style="text-align:center; margin:0 auto;">Dúvidas, comentários e feedbacks.<br>Essa é a hora de perguntar tudo!</p>
+      <div style="display:flex; gap:20px; margin-top:8px; flex-wrap:wrap; justify-content:center;">
+        <div style="background:rgba(79,130,155,0.08); border:1px solid rgba(79,130,155,0.25); border-radius:10px; padding:16px 24px; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--teal);">playwright.dev</div>
+        <div style="background:rgba(114,75,99,0.08); border:1px solid rgba(114,75,99,0.25); border-radius:10px; padding:16px 24px; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--plum);">playwright.dev/docs/intro</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 14 · FIM ══ -->
+  <div class="slide" id="s14">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-green"></div>
+    <div class="slide-num">14 / 14</div>
+
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; position:relative; z-index:1;">
+      <div class="tag tag-green">Até a próxima aula!</div>
+      <h1>Obrigada! <span class="hl">🎭</span></h1>
+      <p class="subtitle">Continue praticando em <strong style="color:var(--text);">playwright.dev</strong><br>A Parte 2 vem aí!</p>
+      <div style="margin-top:48px; display:flex; gap:24px; flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:4px;">Documentação</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--teal);">playwright.dev/docs/intro</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:4px;">Novidades</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--teal);">playwright.dev/docs/release-notes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ══ NAVIGATION ══ -->
+<div class="nav">
+  <button onclick="prev()">← Prev</button>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+  <div class="counter" id="counter">1 / 14</div>
+  <button onclick="next()">Next →</button>
+
+  <!-- Toggle light/dark -->
+  <button class="theme-toggle-btn"
+          aria-label="Ativar modo claro"
+          aria-pressed="false"
+          title="Modo escuro ativo — clique para claro">
+    <!-- Sol: visível no modo escuro -->
+    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <!-- Lua: visível no modo claro -->
+    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  const TOTAL = 14;
+  let current = 1;
+
+  function showSlide(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById('s' + n).classList.add('active');
+    document.getElementById('counter').textContent = n + ' / ' + TOTAL;
+    document.getElementById('progress').style.width = (n / TOTAL * 100) + '%';
+    current = n;
+  }
+
+  function next() {
+    if (current < TOTAL) showSlide(current + 1);
+  }
+
+  function prev() {
+    if (current > 1) showSlide(current - 1);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') showSlide(1);
+    if (e.key === 'End')  showSlide(TOTAL);
+  });
+
+  // Touch swipe
+  let startX = 0;
+  document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (dx < -50) next();
+    if (dx > 50) prev();
+  });
+</script>
+<script src="js/theme-toggle.js"></script>
+</body>
+</html>

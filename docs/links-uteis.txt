@@ -1,0 +1,12 @@
+https://demo.playwright.dev/todomvc/
+
+https://playwright.dev/docs/intro#installing-playwright
+https://playwright.dev/docs/release-notes
+https://playwright.dev/docs/test-configuration
+https://playwright.dev/docs/best-practices#best-practices
+https://playwright.dev/docs/test-reporters
+https://playwright.dev/docs/actionability
+https://playwright.dev/docs/trace-viewer-intro
+https://playwright.dev/docs/test-ui-mode
+https://playwright.dev/docs/debug
+https://playwright.dev/docs/codegen-intro

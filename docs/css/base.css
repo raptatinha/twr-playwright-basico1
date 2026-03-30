@@ -1,0 +1,151 @@
+/* ══════════════════════════════════════════════
+   base.css — Variáveis, reset e estilos globais
+   Compartilhado por todos os arquivos HTML
+   ══════════════════════════════════════════════ */
+
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:     #030214;
+  --bg2:    #2e1246;
+  --bg3:    #1a0a2e;
+  --bg4:    #483638;
+  --text:   #fbf7df;
+  --text2:  #e4dfd9;
+  --muted:  #a48d84;
+  --border: #483638;
+  --teal:   #4f829b;
+  --teal-h: #3d6a80;
+  --teal-m: rgba(79,130,155,0.15);
+  --plum:   #724b63;
+  --plum-m: rgba(114,75,99,0.15);
+  --warn:   #724b63;
+  --tip:    #a48d84;
+
+  /* aliases para compatibilidade retroativa */
+  --green: #4f829b; --green-dim: #3d6a80; --green-dark: #3d6a80;
+  --dark: #030214; --dark2: #2e1246; --dark3: #1a0a2e;
+  --accent: #724b63; --orange: #a48d84; --purple: #724b63;
+  --white: #fbf7df; --gray: #a48d84; --light: #e4dfd9;
+  --red: #724b63; --yellow: #a48d84;
+}
+
+/* ── RESET ── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ── BASE ── */
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ── INLINE CODE ── */
+code, .mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  background: var(--teal-m);
+  color: var(--teal);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ── SYNTAX HIGHLIGHT TOKENS ── */
+.kw  { color: #c78fa0; }
+.fn  { color: #7ab3c8; }
+.str { color: #a48d84; }
+.cm  { color: #483638; }
+.num { color: #e4dfd9; }
+.op  { color: #79c0ff; }
+
+/* ── HIGHLIGHT UTILITIES ── */
+.hl        { color: var(--teal); }
+.hl-blue   { color: var(--plum); }
+.hl-orange { color: var(--muted); }
+
+/* ══════════════════════════════════════════════
+   LIGHT MODE — html[data-theme="light"]
+   Mantém a identidade visual (teal + plum) com
+   fundos claros e alto contraste para acessibilidade.
+   ══════════════════════════════════════════════ */
+
+html[data-theme="light"] {
+  color-scheme: light;
+
+  /* Fundos: brancos quentes / cremes */
+  --bg:   #fafaf6;
+  --bg2:  #f0ece4;
+  --bg3:  #e8e2da;
+  --bg4:  #ddd8d0;
+
+  /* Texto: roxos escuros e marrons — leitura confortável */
+  --text:  #1a0a2e;
+  --text2: #483638;
+  --muted: #6b5651;
+
+  /* Bordas */
+  --border: #c8bfb8;
+
+  /* Teal mais escuro para contraste WCAG AA em fundo claro */
+  --teal:   #2d5f78;
+  --teal-h: #1e4a5e;
+  --teal-m: rgba(45, 95, 120, 0.12);
+
+  /* Plum mais escuro para contraste WCAG AA em fundo claro */
+  --plum:   #5a3c4f;
+  --plum-m: rgba(90, 60, 79, 0.12);
+
+  /* Utilitários */
+  --warn: #5a3c4f;
+  --tip:  #6b5651;
+
+  /* Aliases retroativos */
+  --green: #2d5f78; --green-dim: #1e4a5e; --green-dark: #1e4a5e;
+  --dark: #1a0a2e; --dark2: #483638; --dark3: #e8e2da;
+  --accent: #5a3c4f; --orange: #6b5651; --purple: #5a3c4f;
+  --white: #fafaf6; --gray: #6b5651; --light: #f0ece4;
+  --red: #5a3c4f; --yellow: #6b5651;
+}
+
+/* Syntax highlight adaptado para light mode */
+html[data-theme="light"] .kw  { color: #8b3a5a; }
+html[data-theme="light"] .fn  { color: #1e5a78; }
+html[data-theme="light"] .str { color: #6b5651; }
+html[data-theme="light"] .cm  { color: #a48d84; }
+html[data-theme="light"] .num { color: #483638; }
+html[data-theme="light"] .op  { color: #2d5f78; }
+
+/* ── BOTÃO DE TOGGLE ── */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--teal);
+  border-color: var(--teal);
+  background: var(--teal-m);
+}
+
+.theme-toggle-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+/* Ícones: sol em modo escuro, lua em modo claro */
+.theme-toggle-btn .icon-sun  { display: block; }
+.theme-toggle-btn .icon-moon { display: none; }
+
+html[data-theme="light"] .theme-toggle-btn .icon-sun  { display: none; }
+html[data-theme="light"] .theme-toggle-btn .icon-moon { display: block; }

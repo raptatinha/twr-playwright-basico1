@@ -1,0 +1,38 @@
+[10] Intro
+
+19:10 
+1. O que é Playwright - 10m
+Site https://playwright.dev/
+Quando usar Playwright
+19:20
+2. Setup e primeiro teste - 20m
+npm init playwright@latest
+Estrutura do projeto
+Estrutura de arquivos
+Rodar testes
+Visualizar resultados dos testes – Relatórios
+19:40
+3. Locators - 15m
+getByRole, getByText, getByTestId, etc.
+Por que evitar CSS/XPath
+Boas práticas de seleção
+19:55
+4. Interações básicas - 15min
+click, fill, select, upload, keyboard
+20:10
+5. Assertions e auto-wait - 15m
+expect
+Auto waiting
+Por que evitar waitForTimeout
+20:25
+6. Execução e browsers - 10m
+Chromium/Firefox/WebKit
+Headed vs headless
+Paralelismo básico
+20:35
+7. Debug rápido - 10m
+npx playwright test –ui
+trace viewer
+Playwright extension
+20:45
+Q&A - 15min

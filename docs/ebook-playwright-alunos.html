@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playwright Básico · Parte 1 — Material do Aluno · testingwithrenata.com</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/ebook.css">
+<script>/* Anti-FOUC */
+(function(){try{var t=localStorage.getItem('twr-docs-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();
+</script>
+<style>
+  /* ── OVERRIDES: fontes de seção em JetBrains Mono (específico deste arquivo) ── */
+  .section-title        { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .section-number       { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .section-heading h2   { font-family: 'JetBrains Mono', monospace; }
+  .card-title           { font-size: 12px; }
+
+  /* ── OVERRIDE: info-box com fundo plum (diferente do instrutora) ── */
+  .info-box             { background: var(--plum-m); border-left-color: var(--teal); }
+  .info-box-title       { color: var(--plum); }
+
+  /* ── CHEAT SHEET ── */
+  .cheat-section {
+    background: var(--bg2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(79,130,155,0.2);
+  }
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .cheat-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .cheat-card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .cheat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 13px;
+  }
+  .cheat-row:last-child { border-bottom: none; }
+  .cheat-key  { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-size: 12px; flex-shrink: 0; }
+  .cheat-desc { color: var(--muted); text-align: right; font-size: 12px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--bg2);
+    padding: 48px 0;
+    border-top: 1px solid rgba(79,130,155,0.15);
+    text-align: center;
+  }
+  .footer p      { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  .footer .green { color: var(--teal); }
+
+  /* ── STEP LIST ── */
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+  .step  { display: flex; gap: 14px; align-items: flex-start; }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    background: var(--teal-m);
+    border: 1px solid rgba(79,130,155,0.3);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-content           { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .step-content strong    { color: var(--text); }
+  .step-content span      { font-size: 13px; color: var(--muted); display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<section class="cover">
+  <div class="cover-grid"></div>
+  <div style="position:relative; z-index:1;">
+    <div class="cover-badge">Material do Aluno · Playwright Básico</div>
+    <h1>Parte 1<br><span>Introdução ao</span><br>Playwright</h1>
+    <p class="cover-sub">Use este material para revisar o conteúdo da aula, consultar os exemplos e praticar em casa no seu ritmo.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Módulo</span>
+        <span class="cover-meta-value">Parte 1</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Tópicos</span>
+        <span class="cover-meta-value">7 seções</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Nível</span>
+        <span class="cover-meta-value">Iniciante</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Inclui</span>
+        <span class="cover-meta-value">Cheat sheet</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ O QUE VOCÊ VAI ENCONTRAR ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <p class="section-label">Neste material</p>
+    <h2 class="section-title">O que você vai encontrar aqui</h2>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Conteúdo coberto</div>
+        <ul>
+          <li>O que é Playwright e quando usar</li>
+          <li>Instalação do zero com <code>npm init playwright@latest</code></li>
+          <li>Estrutura do projeto e primeiros testes</li>
+          <li>Locators — como encontrar elementos na página</li>
+          <li>Interações: click, fill, select, upload, teclado</li>
+          <li>Assertions e o sistema de auto-wait</li>
+          <li>Execução em múltiplos browsers</li>
+          <li>Debug com UI Mode, Trace Viewer e extensão VS Code</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Como usar este material</div>
+        <ul>
+          <li>Leia cada seção na ordem para reforçar o que foi visto na aula</li>
+          <li>Use os <strong>blocos de código</strong> como referência ao praticar</li>
+          <li>Faça os exercícios sugeridos em casa para fixar o conteúdo</li>
+          <li>Consulte a <strong>Referência Rápida</strong> no final sempre que precisar</li>
+          <li>Acesse <code>playwright.dev</code> para a documentação completa</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">📋 Pré-requisito</div>
+      <p>Você precisa ter o <strong>Node.js v18 ou superior</strong> instalado. Verifique com <code>node -v</code> no terminal. Se estiver em uma versão mais antiga, acesse <strong>nodejs.org</strong> para atualizar antes de começar a praticar.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 1 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">01</div>
+    <div class="section-header">
+      <div class="section-icon">🎭</div>
+      <div class="section-heading">
+        <h2>O que é Playwright</h2>
+        <div class="meta">
+          <span class="meta-chip chip-green">Conceito</span>
+          <span class="meta-chip chip-purple">Teoria</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">O que é</div>
+        <ul>
+          <li>Biblioteca open-source criada e mantida pela <strong>Microsoft</strong></li>
+          <li>Permite automatizar browsers para testes E2E (end-to-end)</li>
+          <li>Suporta <strong>Chromium, Firefox e WebKit</strong> com uma única API</li>
+          <li>Disponível para JavaScript, TypeScript, Python, Java e .NET</li>
+          <li>Principal diferencial: <strong>auto-wait nativo</strong> — menos testes frágeis</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Quando usar Playwright</div>
+        <ul>
+          <li>Testar fluxos completos de usuário: login, checkout, formulários</li>
+          <li>Validar a aplicação em múltiplos browsers simultaneamente</li>
+          <li>Cenários com múltiplas abas, downloads ou uploads</li>
+          <li>Projetos com stack TypeScript ou JavaScript</li>
+          <li>Quando a velocidade e o paralelismo são importantes</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="remember-box">
+      <div class="remember-box-title">💡 Para lembrar</div>
+      <p>O Playwright testa a sua aplicação da perspectiva do usuário — abre um browser de verdade, clica em botões, preenche formulários e verifica se tudo funciona. É diferente de testes unitários, que testam funções isoladas de código.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 2 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">02</div>
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <div class="section-heading">
+        <h2>Setup e Primeiro Teste</h2>
+        <div class="meta">
+          <span class="meta-chip chip-green">Prática</span>
+          <span class="meta-chip chip-blue">Instalação</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <div class="card-title">Instalando do zero — passo a passo</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Crie uma pasta vazia e abra no VS Code</strong>
+            <span>mkdir meu-projeto &amp;&amp; cd meu-projeto &amp;&amp; code .</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Rode o instalador interativo</strong>
+            <span>O wizard vai perguntar: TypeScript ou JavaScript, nome da pasta de testes, se quer configurar GitHub Actions. Pode aceitar os padrões.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Explore a estrutura gerada</strong>
+            <span>Veja os arquivos: playwright.config.ts, tests/, tests-examples/ e package.json</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Rode os testes de exemplo</strong>
+            <span>Use <code>npx playwright test</code> e observe a saída no terminal</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong>Abra o relatório HTML</strong>
+            <span>Use <code>npx playwright show-report</code> para ver os resultados no browser</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm"># Instalar Playwright (rode dentro da pasta do projeto)</span>
+<span class="fn">npm</span> init playwright@latest
+
+<span class="cm"># Rodar todos os testes</span>
+<span class="fn">npx</span> playwright test
+
+<span class="cm"># Rodar apenas um arquivo específico</span>
+<span class="fn">npx</span> playwright test example.spec.ts
+
+<span class="cm"># Ver o relatório HTML</span>
+<span class="fn">npx</span> playwright show-report</pre>
+    </div>
+
+    <div class="content-grid" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-title">Estrutura do projeto</div>
+        <ul>
+          <li><code>playwright.config.ts</code> — configurações globais do Playwright</li>
+          <li><code>tests/</code> — onde ficam seus arquivos <code>.spec.ts</code></li>
+          <li><code>tests-examples/</code> — exemplo completo gerado pelo wizard</li>
+          <li><code>package.json</code> — dependências e scripts do projeto</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">O primeiro teste gerado</div>
+        <ul>
+          <li>Abre <code>playwright.dev</code> no browser</li>
+          <li>Verifica o título da página com <code>toHaveTitle</code></li>
+          <li>Clica em um link e verifica a URL</li>
+          <li>É um ótimo ponto de partida para entender a estrutura</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">📁 Dica</div>
+      <p>O arquivo <code>tests-examples/demo-todo-app.spec.ts</code> tem exemplos mais ricos de tudo que vimos na aula. Vale a pena ler e rodar quando estiver praticando em casa.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 3 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">03</div>
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <div class="section-heading">
+        <h2>Locators</h2>
+        <div class="meta">
+          <span class="meta-chip chip-green">Conceito</span>
+          <span class="meta-chip chip-purple">Boas Práticas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Locators recomendados</div>
+        <ul>
+          <li><code>getByRole()</code> — por papel de acessibilidade (button, link, heading...)</li>
+          <li><code>getByText()</code> — pelo texto visível do elemento</li>
+          <li><code>getByLabel()</code> — por label associado ao input</li>
+          <li><code>getByPlaceholder()</code> — pelo placeholder do input</li>
+          <li><code>getByTestId()</code> — por atributo <code>data-testid</code></li>
+          <li><code>getByAltText()</code> — por atributo alt de imagens</li>
+          <li><code>getByTitle()</code> — por atributo title</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Por que evitar CSS e XPath</div>
+        <ul>
+          <li>Quebram facilmente quando o layout muda</li>
+          <li>Não refletem como o usuário real interage com a página</li>
+          <li>Dificultam a manutenção dos testes ao longo do tempo</li>
+          <li>Locators semânticos são mais legíveis e resistentes a mudanças</li>
+          <li>O Playwright prioriza acessibilidade — boa prática para o produto</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm">// ✅ Bom — usa getByRole (semântico e robusto)</span>
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">'Entrar'</span> }).<span class="fn">click</span>();
+
+<span class="cm">// ✅ Bom — usa getByLabel (ideal para formulários)</span>
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'E-mail'</span>).<span class="fn">fill</span>(<span class="str">'teste@email.com'</span>);
+
+<span class="cm">// ✅ Bom — usa getByTestId (quando há data-testid no HTML)</span>
+<span class="kw">await</span> page.<span class="fn">getByTestId</span>(<span class="str">'submit-btn'</span>).<span class="fn">click</span>();
+
+<span class="cm">// ❌ Evitar — CSS frágil, quebra com refatorações de UI</span>
+<span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'.btn.btn-primary.submit > span'</span>).<span class="fn">click</span>();
+
+<span class="cm">// ❌ Evitar — XPath longo e difícil de manter</span>
+<span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'//div[@class="form"]/button[2]'</span>).<span class="fn">click</span>();</pre>
+    </div>
+
+    <div class="practice-box">
+      <div class="practice-box-title">🏠 Para praticar em casa</div>
+      <ul>
+        <li>Rode <code>npx playwright codegen https://playwright.dev</code> e interaja com a página. Veja os locators sendo gerados automaticamente</li>
+        <li>Abra uma página qualquer, inspecione os elementos e tente escrever locators usando <code>getByRole</code> e <code>getByLabel</code></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 4 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">04</div>
+    <div class="section-header">
+      <div class="section-icon">🖱️</div>
+      <div class="section-heading">
+        <h2>Interações Básicas</h2>
+        <div class="meta">
+          <span class="meta-chip chip-green">Prática</span>
+          <span class="meta-chip chip-blue">Referência</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Ações de mouse e teclado</div>
+        <ul>
+          <li><code>click()</code> — clica no elemento</li>
+          <li><code>dblclick()</code> — duplo clique</li>
+          <li><code>hover()</code> — passa o mouse sobre o elemento</li>
+          <li><code>fill()</code> — preenche um input (limpa o valor anterior)</li>
+          <li><code>type()</code> — digita caractere por caractere</li>
+          <li><code>press('Enter')</code> — pressiona uma tecla (Enter, Tab, Escape...)</li>
+          <li><code>selectOption()</code> — seleciona valor em um dropdown</li>
+          <li><code>setInputFiles()</code> — faz upload de um arquivo</li>
+          <li><code>check()</code> / <code>uncheck()</code> — marca/desmarca checkbox</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Diferença entre fill() e type()</div>
+        <ul>
+          <li><code>fill()</code> limpa o campo antes de escrever — mais rápido e direto</li>
+          <li><code>type()</code> simula a digitação real, tecla por tecla — mais lento</li>
+          <li>Na maioria dos casos, prefira <code>fill()</code></li>
+          <li>Use <code>type()</code> quando o site tiver lógica que depende de eventos de teclado intermediários (ex: autocomplete)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm">// Preenchendo um formulário de login completo</span>
+<span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'https://exemplo.com/login'</span>);
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'E-mail'</span>).<span class="fn">fill</span>(<span class="str">'user@email.com'</span>);
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'Senha'</span>).<span class="fn">fill</span>(<span class="str">'senha123'</span>);
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">'Entrar'</span> }).<span class="fn">click</span>();
+
+<span class="cm">// Selecionando uma opção em um dropdown</span>
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'País'</span>).<span class="fn">selectOption</span>(<span class="str">'Brasil'</span>);
+
+<span class="cm">// Pressionando Enter após preencher um campo de busca</span>
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'searchbox'</span>).<span class="fn">press</span>(<span class="str">'Enter'</span>);</pre>
+    </div>
+
+    <div class="practice-box">
+      <div class="practice-box-title">🏠 Para praticar em casa</div>
+      <ul>
+        <li>Escreva um teste que acesse <code>playwright.dev</code>, clique em "Docs" e verifique que a página carregou</li>
+        <li>Tente usar o codegen para capturar automaticamente as interações enquanto você navega</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 5 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">05</div>
+    <div class="section-header">
+      <div class="section-icon">✅</div>
+      <div class="section-heading">
+        <h2>Assertions e Auto-wait</h2>
+        <div class="meta">
+          <span class="meta-chip chip-green">Conceito chave</span>
+          <span class="meta-chip chip-purple">Boas Práticas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Assertions com expect()</div>
+        <ul>
+          <li><code>toBeVisible()</code> — elemento está visível na tela</li>
+          <li><code>toBeHidden()</code> — elemento está oculto</li>
+          <li><code>toHaveText()</code> — tem o texto esperado</li>
+          <li><code>toHaveValue()</code> — input tem o valor esperado</li>
+          <li><code>toBeChecked()</code> — checkbox está marcado</li>
+          <li><code>toBeEnabled()</code> — elemento está habilitado</li>
+          <li><code>toHaveURL()</code> — URL atual da página</li>
+          <li><code>toHaveTitle()</code> — título da aba do browser</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Auto-wait — o grande diferencial</div>
+        <ul>
+          <li>O Playwright <strong>espera automaticamente</strong> o elemento estar pronto antes de agir</li>
+          <li>Verifica se o elemento está: visível, estável e habilitado</li>
+          <li>Timeout padrão: <strong>30 segundos</strong> por ação ou assertion</li>
+          <li>Assertions também fazem retry — tentam novamente até passar ou dar timeout</li>
+          <li>Isso elimina a maioria dos <code>waitFor</code> manuais</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm">// Assertions com auto-retry embutido</span>
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByRole</span>(<span class="str">'heading'</span>)).<span class="fn">toBeVisible</span>();
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByText</span>(<span class="str">'Login realizado!'</span>)).<span class="fn">toHaveText</span>(<span class="str">'Login realizado!'</span>);
+<span class="kw">await</span> <span class="fn">expect</span>(page).<span class="fn">toHaveURL</span>(<span class="str">/dashboard/</span>);
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByLabel</span>(<span class="str">'Nome'</span>)).<span class="fn">toHaveValue</span>(<span class="str">'Maria'</span>);
+
+<span class="cm">// ❌ Anti-pattern — nunca usar isso</span>
+<span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="num">3000</span>); <span class="cm">// sleep fixo = teste lento e frágil</span>
+
+<span class="cm">// ✅ Alternativa correta — deixe o Playwright esperar</span>
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByText</span>(<span class="str">'Carregando...'</span>)).<span class="fn">toBeHidden</span>();</pre>
+    </div>
+
+    <div class="warn-box">
+      <div class="warn-box-title">⚠️ Evite waitForTimeout()</div>
+      <p>O <code>waitForTimeout(3000)</code> é um sleep fixo de 3 segundos — ele torna o teste lento desnecessariamente E ainda pode ser insuficiente em máquinas mais lentas. O auto-wait do Playwright resolve isso: ele espera o tempo certo, nem mais nem menos.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 6 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">06</div>
+    <div class="section-header">
+      <div class="section-icon">🌐</div>
+      <div class="section-heading">
+        <h2>Execução e Browsers</h2>
+        <div class="meta">
+          <span class="meta-chip chip-green">Conceito</span>
+          <span class="meta-chip chip-blue">Referência</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Browsers suportados</div>
+        <ul>
+          <li><strong>Chromium</strong> — padrão, cobre Chrome e Edge</li>
+          <li><strong>Firefox</strong> — versão customizada do Firefox</li>
+          <li><strong>WebKit</strong> — motor do Safari (funciona no Linux também)</li>
+          <li>Todos configurados no <code>playwright.config.ts</code> via <code>projects</code></li>
+          <li>Instalar com: <code>npx playwright install</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Modos de execução</div>
+        <ul>
+          <li><strong>Headless</strong> — padrão, sem janela visível, mais rápido. Usado em CI</li>
+          <li><strong>Headed</strong> — com <code>--headed</code>, abre o browser na tela</li>
+          <li><strong>Paralelismo</strong> — múltiplos testes rodam ao mesmo tempo por padrão</li>
+          <li>Workers configuráveis: <code>workers: 4</code> no config</li>
+          <li>Modo serial: <code>test.describe.serial</code> para testes dependentes</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm"># Rodar com janela visível (ótimo para aprender)</span>
+<span class="fn">npx</span> playwright test --headed
+
+<span class="cm"># Rodar apenas em Firefox</span>
+<span class="fn">npx</span> playwright test --project=firefox
+
+<span class="cm"># Rodar em todos os browsers configurados</span>
+<span class="fn">npx</span> playwright test --project=chromium --project=firefox --project=webkit
+
+<span class="cm"># Rodar em modo sequencial (1 worker)</span>
+<span class="fn">npx</span> playwright test --workers=1</pre>
+    </div>
+
+    <div class="remember-box">
+      <div class="remember-box-title">💡 Para lembrar</div>
+      <p>Durante o aprendizado, use <code>--headed</code> sempre que possível. Ver o browser abrindo e as ações acontecendo em tempo real ajuda muito a entender o que o seu teste está fazendo.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 7 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">07</div>
+    <div class="section-header">
+      <div class="section-icon">🔍</div>
+      <div class="section-heading">
+        <h2>Debug Rápido</h2>
+        <div class="meta">
+          <span class="meta-chip chip-green">Ferramentas</span>
+          <span class="meta-chip chip-blue">VS Code</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">UI Mode</div>
+        <ul>
+          <li>Interface visual completa para rodar e inspecionar testes</li>
+          <li><strong>Time-travel</strong>: veja screenshot de cada passo do teste</li>
+          <li>Inspecione o DOM no exato momento de cada ação</li>
+          <li>Filtre, busque e re-rode testes facilmente</li>
+          <li>Rodar com: <code>npx playwright test --ui</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Trace Viewer</div>
+        <ul>
+          <li>Grava tudo que aconteceu durante o teste</li>
+          <li>Inclui screenshots, chamadas de rede, console e DOM passo a passo</li>
+          <li>Essencial para entender por que um teste falhou, especialmente em CI</li>
+          <li>Habilitar no config: <code>trace: 'on-first-retry'</code></li>
+          <li>Ver: <code>npx playwright show-trace trace.zip</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm"># UI Mode — interface visual interativa</span>
+<span class="fn">npx</span> playwright test --ui
+
+<span class="cm"># Debug passo a passo no terminal</span>
+<span class="fn">npx</span> playwright test --debug
+
+<span class="cm"># Gerar código automaticamente navegando no browser</span>
+<span class="fn">npx</span> playwright codegen https://playwright.dev
+
+<span class="cm"># Ver trace de uma execução</span>
+<span class="fn">npx</span> playwright show-trace test-results/trace.zip
+
+<span class="cm"># Habilitar trace no playwright.config.ts</span>
+use: {
+  trace: <span class="str">'on-first-retry'</span>,  <span class="cm">// grava só quando o teste falha</span>
+}</pre>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">🔌 Extensão VS Code</div>
+      <p>Instale a extensão <strong>Playwright Test for VS Code</strong> (id: <code>ms-playwright.playwright</code>). Com ela você roda testes com um clique, vê o resultado inline no editor, abre o codegen e o trace viewer sem sair do VS Code.</p>
+    </div>
+
+    <div class="practice-box">
+      <div class="practice-box-title">🏠 Para praticar em casa</div>
+      <ul>
+        <li>Abra o UI Mode com <code>npx playwright test --ui</code> e explore os testes de exemplo clicando em cada passo</li>
+        <li>Quebre um teste de propósito (mude um texto esperado) e use o Trace Viewer para ver onde falhou</li>
+        <li>Experimente o codegen em um site que você conhece</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ CHEAT SHEET ══════════ -->
+<section class="cheat-section">
+  <div class="container">
+    <p class="section-label">Referência Rápida</p>
+    <h2 class="section-title">Cheat Sheet · Playwright Parte 1</h2>
+
+    <div class="cheat-grid">
+
+      <div class="cheat-card">
+        <div class="cheat-card-title">Comandos do Terminal</div>
+        <div class="cheat-row">
+          <span class="cheat-key">npm init playwright@latest</span>
+          <span class="cheat-desc">Instalar</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">npx playwright test</span>
+          <span class="cheat-desc">Rodar todos</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">npx playwright test --ui</span>
+          <span class="cheat-desc">UI Mode</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">npx playwright test --headed</span>
+          <span class="cheat-desc">Com janela</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">npx playwright test --debug</span>
+          <span class="cheat-desc">Passo a passo</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">npx playwright show-report</span>
+          <span class="cheat-desc">Ver relatório</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">npx playwright codegen &lt;url&gt;</span>
+          <span class="cheat-desc">Gerar código</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">npx playwright install</span>
+          <span class="cheat-desc">Instalar browsers</span>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-card-title">Locators</div>
+        <div class="cheat-row">
+          <span class="cheat-key">getByRole(role, {name})</span>
+          <span class="cheat-desc">Por acessibilidade</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">getByText('texto')</span>
+          <span class="cheat-desc">Pelo texto visível</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">getByLabel('label')</span>
+          <span class="cheat-desc">Pelo label do input</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">getByPlaceholder('ph')</span>
+          <span class="cheat-desc">Pelo placeholder</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">getByTestId('id')</span>
+          <span class="cheat-desc">Pelo data-testid</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">getByAltText('alt')</span>
+          <span class="cheat-desc">Alt de imagem</span>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-card-title">Interações</div>
+        <div class="cheat-row">
+          <span class="cheat-key">click()</span>
+          <span class="cheat-desc">Clica</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">fill('valor')</span>
+          <span class="cheat-desc">Preenche input</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">press('Enter')</span>
+          <span class="cheat-desc">Pressiona tecla</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">selectOption('opt')</span>
+          <span class="cheat-desc">Seleciona dropdown</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">hover()</span>
+          <span class="cheat-desc">Passa o mouse</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">dblclick()</span>
+          <span class="cheat-desc">Duplo clique</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">check() / uncheck()</span>
+          <span class="cheat-desc">Checkbox</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">setInputFiles(path)</span>
+          <span class="cheat-desc">Upload de arquivo</span>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-card-title">Assertions (expect)</div>
+        <div class="cheat-row">
+          <span class="cheat-key">toBeVisible()</span>
+          <span class="cheat-desc">Está visível</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">toBeHidden()</span>
+          <span class="cheat-desc">Está oculto</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">toHaveText('txt')</span>
+          <span class="cheat-desc">Tem o texto</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">toHaveValue('val')</span>
+          <span class="cheat-desc">Valor do input</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">toBeChecked()</span>
+          <span class="cheat-desc">Checkbox marcado</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">toBeEnabled()</span>
+          <span class="cheat-desc">Habilitado</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">toHaveURL(/regex/)</span>
+          <span class="cheat-desc">URL da página</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">toHaveTitle('título')</span>
+          <span class="cheat-desc">Título da aba</span>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-card-title">Flags úteis</div>
+        <div class="cheat-row">
+          <span class="cheat-key">--project=firefox</span>
+          <span class="cheat-desc">Só Firefox</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">--workers=1</span>
+          <span class="cheat-desc">Sem paralelismo</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">--grep "nome do teste"</span>
+          <span class="cheat-desc">Filtrar testes</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">--retries=2</span>
+          <span class="cheat-desc">Tentar de novo</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">--timeout=60000</span>
+          <span class="cheat-desc">Timeout em ms</span>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <div class="cheat-card-title">Links úteis</div>
+        <div class="cheat-row">
+          <span class="cheat-key">playwright.dev</span>
+          <span class="cheat-desc">Documentação oficial</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">playwright.dev/docs/intro</span>
+          <span class="cheat-desc">Guia de instalação</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">playwright.dev/docs/locators</span>
+          <span class="cheat-desc">Guia de locators</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">playwright.dev/docs/api/class-page</span>
+          <span class="cheat-desc">API completa</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">ms-playwright.playwright</span>
+          <span class="cheat-desc">Extensão VS Code</span>
+        </div>
+        <div class="cheat-row">
+          <span class="cheat-key">playwright.dev/docs/release-notes</span>
+          <span class="cheat-desc">Novidades</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ BOTÃO LIGHT/DARK (fixo) ══ -->
+<button class="theme-toggle-btn theme-toggle-btn--fixed"
+        aria-label="Ativar modo claro"
+        aria-pressed="false"
+        title="Modo escuro ativo — clique para claro">
+  <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+  <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <p class="green" style="font-size:20px; margin-bottom:8px;">🎭</p>
+    <p>Playwright Básico · Parte 1 &nbsp;|&nbsp; <span class="green">Material do Aluno</span></p>
+    <p style="margin-top:8px;">playwright.dev &nbsp;·&nbsp; Bons estudos!</p>
+  </div>
+</footer>
+
+<script src="js/theme-toggle.js"></script>
+</body>
+</html>
