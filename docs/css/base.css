@@ -107,6 +107,12 @@ html[data-theme="light"] {
   --red: #5a3c4f; --yellow: #6b5651;
 }
 
+/* Logo swap: dark theme shows white logos, light theme shows dark logos */
+.logo-dark  { display: none; }
+.logo-light { display: inline; }
+html[data-theme="light"] .logo-dark  { display: inline; }
+html[data-theme="light"] .logo-light { display: none; }
+
 /* Syntax highlight adaptado para light mode */
 html[data-theme="light"] .kw  { color: #8b3a5a; }
 html[data-theme="light"] .fn  { color: #1e5a78; }

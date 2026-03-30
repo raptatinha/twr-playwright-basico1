@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playwright Básico · Parte 1 — Guia do Instrutor</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/ebook.css">
+<script>/* Anti-FOUC */
+(function(){try{var t=localStorage.getItem('twr-docs-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();
+</script>
+<style>
+  /* ── TIMELINE (específico deste arquivo) ── */
+  .timeline-section {
+    background: var(--bg2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(79,130,155,0.2);
+  }
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--teal), rgba(79,130,155,0.1));
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -36px; top: 50%;
+    transform: translateY(-50%);
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--teal);
+    background: var(--bg2);
+  }
+  .timeline-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    min-width: 60px;
+    padding-top: 14px;
+    text-align: right;
+  }
+  .timeline-card {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s;
+  }
+  .timeline-card:hover        { border-color: rgba(79,130,155,0.4); }
+  .timeline-card.special      { border-color: rgba(79,130,155,0.35); background: var(--teal-m); }
+  .timeline-card.special-end  { border-color: rgba(114,75,99,0.35); background: var(--plum-m); }
+  .timeline-card-name { font-weight: 600; font-size: 15px; color: var(--text); }
+  .timeline-card-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .timeline-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px; white-space: nowrap;
+  }
+
+  /* ── OVERRIDE: content-section border (diferente do alunos) ── */
+  .content-section { border-top-color: rgba(72,54,56,0.6); }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--bg2);
+    padding: 48px 0;
+    border-top: 1px solid rgba(79,130,155,0.15);
+    text-align: center;
+  }
+  .footer p      { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  .footer .green { color: var(--teal); }
+
+  /* ── CHECKLIST ── */
+  .checklist { display: flex; flex-direction: column; gap: 10px; }
+  .check-item {
+    display: flex; align-items: flex-start;
+    gap: 12px; font-size: 14px; color: var(--text2);
+  }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(79,130,155,0.5);
+    border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── SUMMARY TABLE ── */
+  .summary-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+  .summary-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--muted); text-align: left;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .summary-table td {
+    font-size: 14px; color: var(--text2);
+    padding: 10px 12px; border-bottom: 1px solid rgba(72,54,56,0.4);
+    vertical-align: top;
+  }
+  .summary-table tr:last-child td      { border-bottom: none; }
+  .summary-table tr:hover td           { background: rgba(79,130,155,0.04); }
+  .bar-wrap {
+    background: rgba(72,54,56,0.6);
+    border-radius: 4px; height: 6px; width: 120px;
+    display: inline-block; vertical-align: middle;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(to right, var(--teal), var(--plum));
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<section class="cover">
+  <div class="cover-grid"></div>
+  <div style="position:relative; z-index:1;">
+    <a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-block; margin-bottom:24px;"><img src="img/logo_branca_menor.webp" alt="Testing with Renata" style="height:72px;" class="logo-light"><img src="img/Logo_escura.png" alt="Testing with Renata" style="height:72px;" class="logo-dark"></a>
+    <div class="cover-badge">Guia da Instrutora · Playwright Básico</div>
+    <h1>Parte 1<br><span>Introdução ao</span><br>Playwright</h1>
+    <p class="cover-sub">Orientações pedagógicas, roteiro de aula e distribuição de tempo para a primeira aula do curso.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Duração total</span>
+        <span class="cover-meta-value">2 horas</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Seções de conteúdo</span>
+        <span class="cover-meta-value">7 tópicos</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Nível</span>
+        <span class="cover-meta-value">Iniciante</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Instalação ao vivo</span>
+        <span class="cover-meta-value">Sim (do zero)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TIMELINE ══════════ -->
+<section class="timeline-section">
+  <div class="container">
+    <p class="section-label">Cronograma</p>
+    <h2 class="section-title">Distribuição de Tempo</h2>
+
+    <!-- Summary table -->
+    <div class="full-card" style="margin-bottom: 40px;">
+      <div class="card-title">Visão geral · 120 minutos</div>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Bloco</th>
+            <th>Tempo</th>
+            <th>Proporção</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">00</span></td>
+            <td>Abertura &amp; Apresentação</td>
+            <td><span class="meta-chip chip-time">10 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:8%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">01</span></td>
+            <td>O que é Playwright</td>
+            <td><span class="meta-chip chip-time">8 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:7%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">02</span></td>
+            <td>Setup e primeiro teste</td>
+            <td><span class="meta-chip chip-time">22 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:18%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">03</span></td>
+            <td>Locators</td>
+            <td><span class="meta-chip chip-time">15 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:13%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">04</span></td>
+            <td>Interações básicas</td>
+            <td><span class="meta-chip chip-time">12 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:10%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">05</span></td>
+            <td>Assertions e auto-wait</td>
+            <td><span class="meta-chip chip-time">15 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:13%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">06</span></td>
+            <td>Execução e browsers</td>
+            <td><span class="meta-chip chip-time">10 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:8%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">07</span></td>
+            <td>Debug rápido</td>
+            <td><span class="meta-chip chip-time">8 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:7%"></div></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono">08</span></td>
+            <td>Perguntas &amp; Respostas</td>
+            <td><span class="meta-chip chip-time">20 min</span></td>
+            <td><div class="bar-wrap"><div class="bar-fill" style="width:17%"></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Timeline visual -->
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-time">00:00</div>
+        <div class="timeline-card special">
+          <div>
+            <div class="timeline-card-name">Abertura &amp; Apresentação</div>
+            <div class="timeline-card-desc">Boas-vindas, objetivos da aula, apresentação da instrutora</div>
+          </div>
+          <span class="timeline-badge badge-green">10 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">00:10</div>
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-card-name">01 · O que é Playwright</div>
+            <div class="timeline-card-desc">Conceito, site oficial, quando usar</div>
+          </div>
+          <span class="timeline-badge badge-green">8 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">00:18</div>
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-card-name">02 · Setup e primeiro teste</div>
+            <div class="timeline-card-desc">npm init playwright@latest, estrutura, rodar testes</div>
+          </div>
+          <span class="timeline-badge badge-orange">22 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">00:40</div>
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-card-name">03 · Locators</div>
+            <div class="timeline-card-desc">getByRole, getByText, getByTestId e boas práticas</div>
+          </div>
+          <span class="timeline-badge badge-green">15 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">00:55</div>
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-card-name">04 · Interações básicas</div>
+            <div class="timeline-card-desc">click, fill, select, upload, keyboard</div>
+          </div>
+          <span class="timeline-badge badge-green">12 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">01:07</div>
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-card-name">05 · Assertions e auto-wait</div>
+            <div class="timeline-card-desc">expect, auto-waiting, evitar waitForTimeout</div>
+          </div>
+          <span class="timeline-badge badge-green">15 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">01:22</div>
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-card-name">06 · Execução e browsers</div>
+            <div class="timeline-card-desc">Chromium/Firefox/WebKit, headed, paralelismo</div>
+          </div>
+          <span class="timeline-badge badge-green">10 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">01:32</div>
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-card-name">07 · Debug rápido</div>
+            <div class="timeline-card-desc">UI mode, trace viewer, extensão VS Code</div>
+          </div>
+          <span class="timeline-badge badge-green">8 min</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">01:40</div>
+        <div class="timeline-card special-end">
+          <div>
+            <div class="timeline-card-name">Q&amp;A — Perguntas &amp; Respostas</div>
+            <div class="timeline-card-desc">Dúvidas, encerramento, próximos passos do curso</div>
+          </div>
+          <span class="timeline-badge badge-blue">20 min</span>
+        </div>
+      </div>
+
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ PRÉ-AULA ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <p class="section-label">Antes da Aula</p>
+    <h2 class="section-title">Checklist de Preparação</h2>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Ambiente local</div>
+        <div class="checklist">
+          <div class="check-item"><div class="check-box"></div>Node.js instalado (v18+)</div>
+          <div class="check-item"><div class="check-box"></div>VS Code aberto em pasta vazia</div>
+          <div class="check-item"><div class="check-box"></div>Terminal limpo e visível</div>
+          <div class="check-item"><div class="check-box"></div>Extensão Playwright no VS Code</div>
+          <div class="check-item"><div class="check-box"></div>Navegadores com espaço suficiente</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Preparação didática</div>
+        <div class="checklist">
+          <div class="check-item"><div class="check-box"></div>Site playwright.dev aberto na aba</div>
+          <div class="check-item"><div class="check-box"></div>Slides prontos e testados</div>
+          <div class="check-item"><div class="check-box"></div>Código de exemplo preparado</div>
+          <div class="check-item"><div class="check-box"></div>Download dos browsers feito (<code>npx playwright install</code>)</div>
+          <div class="check-item"><div class="check-box"></div>Timer visível para controlar tempo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-title">💡 Dica de ouro</div>
+      <p>Faça a instalação completa do Playwright <strong>antes</strong> da aula em uma pasta separada. Assim, se algo der errado ao vivo, você tem um projeto de backup pronto para compartilhar. Durante a aula, instale do zero junto com os alunos.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 1 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">01</div>
+    <div class="section-header">
+      <div class="section-icon"><img src="img/playwright-logo.svg" alt="Playwright" style="width:1em; height:1em; vertical-align:middle;"></div>
+      <div class="section-heading">
+        <h2>O que é Playwright</h2>
+        <div class="meta">
+          <span class="meta-chip chip-time">8 minutos</span>
+          <span class="meta-chip chip-level">Teoria</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">O que abordar</div>
+        <ul>
+          <li>Playwright é uma biblioteca open-source da Microsoft para automação de browsers</li>
+          <li>Suporta Chromium, Firefox e WebKit com uma única API</li>
+          <li>Usado para testes E2E (end-to-end), scraping e automação em geral</li>
+          <li>Principal diferencial: confiabilidade — auto-wait nativo, sem flakiness</li>
+          <li>Navegue até <code>playwright.dev</code> ao vivo</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Quando usar Playwright</div>
+        <ul>
+          <li>Quando precisar testar fluxos completos de usuário (login, checkout, formulários)</li>
+          <li>Quando quiser testar em múltiplos browsers simultaneamente</li>
+          <li>Quando Cypress não suporta o caso de uso (ex: múltiplas abas, downloads)</li>
+          <li>Quando a stack é TypeScript/JavaScript</li>
+          <li>Em projetos que precisam de paralelismo e velocidade</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">📌 Ponto para destacar</div>
+      <p>O Playwright é mantido pela Microsoft e tem crescimento impressionante nos últimos anos. Mostre o gráfico de downloads no npm trends ou a popularidade no State of Testing. Isso motiva alunos que estão escolhendo qual ferramenta aprender.</p>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-title">💬 Pergunta para engajar</div>
+      <p>"Alguém aqui já usou Selenium ou Cypress? O que acharam?" — Isso cria conexão e você pode posicionar o Playwright em relação ao que já conhecem.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 2 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">02</div>
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <div class="section-heading">
+        <h2>Setup e Primeiro Teste</h2>
+        <div class="meta">
+          <span class="meta-chip chip-time">22 minutos</span>
+          <span class="meta-chip chip-level">Prática ao vivo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <div class="card-title">Roteiro passo a passo</div>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+        <li style="display:flex; gap:12px; align-items:flex-start;">
+          <span style="font-family:'JetBrains Mono',monospace; color:var(--teal); font-size:12px; margin-top:2px; min-width:24px;">01</span>
+          <div><strong>Criar pasta vazia e abrir no VS Code</strong><br><span style="font-size:13px; color:var(--muted);">mkdir meu-projeto && cd meu-projeto && code .</span></div>
+        </li>
+        <li style="display:flex; gap:12px; align-items:flex-start;">
+          <span style="font-family:'JetBrains Mono',monospace; color:var(--teal); font-size:12px; margin-top:2px; min-width:24px;">02</span>
+          <div><strong>Rodar o instalador interativo</strong><br><span style="font-size:13px; color:var(--muted);">Mostrar as opções do wizard: TypeScript vs JS, nome da pasta de testes, GitHub Actions</span></div>
+        </li>
+        <li style="display:flex; gap:12px; align-items:flex-start;">
+          <span style="font-family:'JetBrains Mono',monospace; color:var(--teal); font-size:12px; margin-top:2px; min-width:24px;">03</span>
+          <div><strong>Explorar a estrutura gerada</strong><br><span style="font-size:13px; color:var(--muted);">playwright.config.ts, pasta tests/, exemplo gerado, package.json</span></div>
+        </li>
+        <li style="display:flex; gap:12px; align-items:flex-start;">
+          <span style="font-family:'JetBrains Mono',monospace; color:var(--teal); font-size:12px; margin-top:2px; min-width:24px;">04</span>
+          <div><strong>Rodar o teste de exemplo</strong><br><span style="font-size:13px; color:var(--muted);">npx playwright test — mostrar saída no terminal</span></div>
+        </li>
+        <li style="display:flex; gap:12px; align-items:flex-start;">
+          <span style="font-family:'JetBrains Mono',monospace; color:var(--teal); font-size:12px; margin-top:2px; min-width:24px;">05</span>
+          <div><strong>Abrir o relatório HTML</strong><br><span style="font-size:13px; color:var(--muted);">npx playwright show-report — explorar o HTML report ao vivo</span></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm"># Comando principal de instalação</span>
+<span class="fn">npm</span> init playwright@latest
+
+<span class="cm"># Rodar todos os testes</span>
+<span class="fn">npx</span> playwright test
+
+<span class="cm"># Rodar apenas um arquivo</span>
+<span class="fn">npx</span> playwright test example.spec.ts
+
+<span class="cm"># Ver relatório HTML</span>
+<span class="fn">npx</span> playwright show-report</pre>
+    </div>
+
+    <div class="content-grid" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-title">Estrutura do projeto</div>
+        <ul>
+          <li><code>playwright.config.ts</code> — configurações globais</li>
+          <li><code>tests/</code> — arquivos de teste <code>.spec.ts</code></li>
+          <li><code>tests-examples/</code> — exemplo rico gerado</li>
+          <li><code>package.json</code> — dependências e scripts</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Pontos de atenção</div>
+        <ul>
+          <li>Node.js 18+ obrigatório — verificar versão com <code>node -v</code></li>
+          <li>Download dos browsers pode demorar (Chromium, Firefox, WebKit)</li>
+          <li>Wizard pergunta sobre CI — pode pular por ora</li>
+          <li>Por padrão roda em 3 workers em paralelo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <div class="warn-box-title">⚠️ Possível problema ao vivo</div>
+      <p>Se um aluno tiver Node.js muito antigo (v14, v16), o Playwright pode falhar. Oriente a atualizar para v18+ antes da aula. Também podem surgir problemas de firewall no download dos browsers em ambientes corporativos.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 3 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">03</div>
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <div class="section-heading">
+        <h2>Locators</h2>
+        <div class="meta">
+          <span class="meta-chip chip-time">15 minutos</span>
+          <span class="meta-chip chip-level">Teoria + Prática</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Locators principais</div>
+        <ul>
+          <li><code>getByRole()</code> — por papel de acessibilidade (button, link, heading...)</li>
+          <li><code>getByText()</code> — pelo texto visível do elemento</li>
+          <li><code>getByLabel()</code> — por label associado ao input</li>
+          <li><code>getByPlaceholder()</code> — pelo placeholder do input</li>
+          <li><code>getByTestId()</code> — por atributo <code>data-testid</code></li>
+          <li><code>getByAltText()</code> — por atributo alt de imagens</li>
+          <li><code>getByTitle()</code> — por atributo title</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Por que evitar CSS / XPath</div>
+        <ul>
+          <li>CSS e XPath quebram facilmente com mudanças de layout</li>
+          <li>Não refletem como o usuário interage com a página</li>
+          <li>Dificultam manutenção de testes a longo prazo</li>
+          <li>Locators semânticos são mais legíveis e resistentes</li>
+          <li>Playwright prioriza acessibilidade — bom para a qualidade do produto</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm">// ✅ Bom — usa getByRole (semântico)</span>
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">'Entrar'</span> }).<span class="fn">click</span>();
+
+<span class="cm">// ✅ Bom — usa getByLabel</span>
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'E-mail'</span>).<span class="fn">fill</span>(<span class="str">'teste@email.com'</span>);
+
+<span class="cm">// ✅ Bom — usa getByTestId (quando há data-testid)</span>
+<span class="kw">await</span> page.<span class="fn">getByTestId</span>(<span class="str">'submit-btn'</span>).<span class="fn">click</span>();
+
+<span class="cm">// ❌ Evitar — CSS frágil</span>
+<span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'.btn.btn-primary.submit > span'</span>).<span class="fn">click</span>();
+
+<span class="cm">// ❌ Evitar — XPath longo</span>
+<span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'//div[@class="form"]/button[2]'</span>).<span class="fn">click</span>();</pre>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-title">💡 Dica pedagógica</div>
+      <p>Use o <strong>Playwright Codegen</strong> (<code>npx playwright codegen https://playwright.dev</code>) ao vivo para mostrar como o Playwright sugere locators automaticamente. Os alunos adoram ver o código sendo gerado enquanto interagem com o browser.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 4 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">04</div>
+    <div class="section-header">
+      <div class="section-icon">🖱️</div>
+      <div class="section-heading">
+        <h2>Interações Básicas</h2>
+        <div class="meta">
+          <span class="meta-chip chip-time">12 minutos</span>
+          <span class="meta-chip chip-level">Prática ao vivo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Interações de mouse e teclado</div>
+        <ul>
+          <li><code>click()</code> — clica em elemento</li>
+          <li><code>dblclick()</code> — duplo clique</li>
+          <li><code>hover()</code> — passa o mouse sobre</li>
+          <li><code>fill()</code> — preenche input (limpa antes)</li>
+          <li><code>type()</code> — digita caractere por caractere</li>
+          <li><code>press()</code> — pressiona tecla (Enter, Tab, Escape...)</li>
+          <li><code>selectOption()</code> — seleciona em dropdown</li>
+          <li><code>setInputFiles()</code> — faz upload de arquivo</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Exemplos práticos para a aula</div>
+        <ul>
+          <li>Preencher formulário de login completo</li>
+          <li>Selecionar item em um dropdown</li>
+          <li>Pressionar Enter após preencher campo de busca</li>
+          <li>Fazer upload de um arquivo de imagem</li>
+          <li>Usar Tab para navegar entre campos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm">// Formulário de login completo</span>
+<span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'https://exemplo.com/login'</span>);
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'E-mail'</span>).<span class="fn">fill</span>(<span class="str">'user@email.com'</span>);
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'Senha'</span>).<span class="fn">fill</span>(<span class="str">'senha123'</span>);
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">'Entrar'</span> }).<span class="fn">click</span>();
+
+<span class="cm">// Selecionar opção em dropdown</span>
+<span class="kw">await</span> page.<span class="fn">getByLabel</span>(<span class="str">'País'</span>).<span class="fn">selectOption</span>(<span class="str">'Brasil'</span>);
+
+<span class="cm">// Tecla de atalho</span>
+<span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'searchbox'</span>).<span class="fn">press</span>(<span class="str">'Enter'</span>);</pre>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">📌 Para a aula</div>
+      <p>Use o site <strong>https://playwright.dev/</strong> ou a demo app do próprio exemplo do Playwright (<code>tests-examples/demo-todo-app.spec.ts</code>) como alvo das interações. Assim os alunos já têm um ambiente confiável e sem necessidade de criar backend.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 5 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">05</div>
+    <div class="section-header">
+      <div class="section-icon">✅</div>
+      <div class="section-heading">
+        <h2>Assertions e Auto-wait</h2>
+        <div class="meta">
+          <span class="meta-chip chip-time">15 minutos</span>
+          <span class="meta-chip chip-level">Teoria + Prática</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Assertions principais (expect)</div>
+        <ul>
+          <li><code>toBeVisible()</code> — elemento está visível</li>
+          <li><code>toBeHidden()</code> — elemento está oculto</li>
+          <li><code>toHaveText()</code> — tem o texto esperado</li>
+          <li><code>toHaveValue()</code> — input tem o valor</li>
+          <li><code>toBeChecked()</code> — checkbox marcado</li>
+          <li><code>toBeEnabled()</code> — elemento habilitado</li>
+          <li><code>toHaveURL()</code> — URL da página</li>
+          <li><code>toHaveTitle()</code> — título da página</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Auto-wait — o grande diferencial</div>
+        <ul>
+          <li>Playwright espera automaticamente o elemento estar pronto antes de agir</li>
+          <li>Espera: visível, estável, ativo, receber eventos</li>
+          <li>Timeout padrão: 30 segundos (configurável)</li>
+          <li>Assertions também aguardam — tentam novamente até passar ou timeout</li>
+          <li>Elimina a maioria dos <code>waitFor</code> manuais</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm">// Assertions com auto-retry embutido</span>
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByRole</span>(<span class="str">'heading'</span>)).<span class="fn">toBeVisible</span>();
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByText</span>(<span class="str">'Login realizado!'</span>)).<span class="fn">toHaveText</span>(<span class="str">'Login realizado!'</span>);
+<span class="kw">await</span> <span class="fn">expect</span>(page).<span class="fn">toHaveURL</span>(<span class="str">/dashboard/</span>);
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByLabel</span>(<span class="str">'Nome'</span>)).<span class="fn">toHaveValue</span>(<span class="str">'Maria'</span>);
+
+<span class="cm">// ❌ Anti-pattern — nunca usar isso</span>
+<span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="num">3000</span>); <span class="cm">// hardcoded sleep = teste frágil</span>
+
+<span class="cm">// ✅ Alternativa correta</span>
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByText</span>(<span class="str">'Carregando...'</span>)).<span class="fn">toBeHidden</span>();</pre>
+    </div>
+
+    <div class="warn-box">
+      <div class="warn-box-title">⚠️ Anti-pattern para enfatizar</div>
+      <p>O <code>waitForTimeout</code> é um "cheiro ruim" em testes. Explique que ele torna os testes lentos (espera tempo desnecessário) E frágeis (pode não ser suficiente em ambiente lento). O auto-wait do Playwright elimina essa necessidade em 99% dos casos.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 6 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">06</div>
+    <div class="section-header">
+      <div class="section-icon">🌐</div>
+      <div class="section-heading">
+        <h2>Execução e Browsers</h2>
+        <div class="meta">
+          <span class="meta-chip chip-time">10 minutos</span>
+          <span class="meta-chip chip-level">Teoria + Demo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Browsers suportados</div>
+        <ul>
+          <li><strong>Chromium</strong> — padrão, cobre Chrome e Edge</li>
+          <li><strong>Firefox</strong> — versão customizada do Firefox</li>
+          <li><strong>WebKit</strong> — motor do Safari (macOS e iOS)</li>
+          <li>Cada um tem seu próprio canal e flags</li>
+          <li>Configurados no <code>playwright.config.ts</code> via <code>projects</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Modos de execução</div>
+        <ul>
+          <li><strong>Headless</strong> — padrão em CI, sem janela visível, mais rápido</li>
+          <li><strong>Headed</strong> — <code>--headed</code> ou <code>headless: false</code>, mostra a janela</li>
+          <li><strong>Paralelismo</strong> — workers rodam em paralelo por padrão</li>
+          <li>Número de workers configurável: <code>workers: 4</code></li>
+          <li>Modo serial: <code>test.describe.serial</code> para dependências</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm"># Rodar em modo headed (janela visível)</span>
+<span class="fn">npx</span> playwright test --headed
+
+<span class="cm"># Rodar apenas em Firefox</span>
+<span class="fn">npx</span> playwright test --project=firefox
+
+<span class="cm"># Rodar em todos os browsers</span>
+<span class="fn">npx</span> playwright test --project=chromium --project=firefox --project=webkit
+
+<span class="cm"># Limitar workers</span>
+<span class="fn">npx</span> playwright test --workers=1</pre>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">📌 Demonstração recomendada</div>
+      <p>Mostre o <code>playwright.config.ts</code> gerado pelo wizard e explique o array <code>projects</code>. Depois rode <code>npx playwright test --headed</code> para que os alunos vejam o browser abrindo. O efeito visual é sempre impactante na primeira aula!</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ SEÇÃO 7 ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <div class="section-number">07</div>
+    <div class="section-header">
+      <div class="section-icon">🔍</div>
+      <div class="section-heading">
+        <h2>Debug Rápido</h2>
+        <div class="meta">
+          <span class="meta-chip chip-time">8 minutos</span>
+          <span class="meta-chip chip-level">Demo ao vivo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">UI Mode — o favorito dos alunos</div>
+        <ul>
+          <li>Interface visual para rodar e inspecionar testes</li>
+          <li>Time-travel: veja cada passo com screenshot</li>
+          <li>Ver o DOM no momento de cada ação</li>
+          <li>Filtrar e re-rodar testes facilmente</li>
+          <li>Rodar: <code>npx playwright test --ui</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Trace Viewer</div>
+        <ul>
+          <li>Grava tudo que aconteceu durante o teste</li>
+          <li>Screenshots, network, console, DOM por passo</li>
+          <li>Essencial para debugar falhas em CI</li>
+          <li>Habilitar: <code>trace: 'on-first-retry'</code> no config</li>
+          <li>Ver: <code>npx playwright show-trace trace.zip</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><span class="cm"># UI Mode (interface visual interativa)</span>
+<span class="fn">npx</span> playwright test --ui
+
+<span class="cm"># Rodar com debug passo a passo</span>
+<span class="fn">npx</span> playwright test --debug
+
+<span class="cm"># Ver trace de um teste específico</span>
+<span class="fn">npx</span> playwright show-trace test-results/trace.zip
+
+<span class="cm"># Habilitar trace no config</span>
+use: {
+  trace: <span class="str">'on-first-retry'</span>,  <span class="cm">// grava só quando falha e retry</span>
+}</pre>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-title">💡 Extensão do VS Code</div>
+      <p>Mostre a extensão <strong>Playwright Test for VS Code</strong> (ms-playwright.playwright). Ela permite rodar testes com um clique, ver o resultado inline, usar o codegen e abrir o trace viewer direto no editor. É um grande diferencial para a experiência de desenvolvimento.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════ Q&A + ENCERRAMENTO ══════════ -->
+<section class="content-section">
+  <div class="container">
+    <p class="section-label">Encerramento</p>
+    <h2 class="section-title">Q&amp;A e Próximos Passos</h2>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-title">Perguntas que costumam surgir</div>
+        <ul>
+          <li>"Playwright vs Cypress — qual usar?" — Depende do projeto; Playwright tem suporte multi-browser e é mais moderno</li>
+          <li>"Posso usar com Python/Java?" — Sim! Playwright tem bindings para Python, Java e .NET</li>
+          <li>"Como integrar no GitHub Actions?" — O wizard já gera o workflow YAML</li>
+          <li>"E testes de API?" — Playwright também suporta com <code>request</code> context</li>
+          <li>"Precisa do browser instalado?" — <code>npx playwright install</code> faz tudo</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Links úteis para compartilhar</div>
+        <ul>
+          <li><code>playwright.dev</code> — documentação oficial</li>
+          <li><code>playwright.dev/docs/intro</code> — instalação</li>
+          <li><code>playwright.dev/docs/release-notes</code> — novidades</li>
+          <li>Extensão: ms-playwright.playwright no VS Code Marketplace</li>
+          <li>Comunidade: Discord oficial do Playwright</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">📌 Sugestão de encerramento</div>
+      <p>Reserve os últimos 2 minutos do Q&A para apresentar o que vem a seguir no curso (Parte 2). Deixe os alunos animados com o que aprenderão. Compartilhe os links úteis no chat da plataforma antes de fechar a sessão.</p>
+    </div>
+    <div style="text-align:right; margin-top:24px;"><a href="https://testingwithrenata.com/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; opacity:0.5;"><img src="img/icone_branco.png" alt="" style="height:18px; width:18px;" class="logo-light"><img src="img/icone_escuro.png" alt="" style="height:18px; width:18px;" class="logo-dark"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">testingwithrenata.com</span></a></div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <p class="green" style="font-size:20px; margin-bottom:8px;"><img src="img/playwright-logo.svg" alt="Playwright" style="width:24px; height:24px; vertical-align:middle;"></p>
+    <p>Playwright Básico · Parte 1 &nbsp;|&nbsp; <span class="green">Guia do Instrutor</span></p>
+    <p style="margin-top:8px;">playwright.dev &nbsp;·&nbsp; 2 horas de aula &nbsp;·&nbsp; Instalação do zero</p>
+  </div>
+</footer>
+
+<!-- ══ BOTÃO LIGHT/DARK (fixo) ══ -->
+<button class="theme-toggle-btn theme-toggle-btn--fixed"
+        aria-label="Ativar modo claro"
+        aria-pressed="false"
+        title="Modo escuro ativo — clique para claro">
+  <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+  <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
+<script src="js/theme-toggle.js"></script>
+</body>
+</html>
